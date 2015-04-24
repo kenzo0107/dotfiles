@@ -6,18 +6,23 @@ export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
 alias gs='git status'
 alias gb='git branch'
 alias gba='git branch -a'
-alias gpsh='git push'
-alias gpll='git pull'
-alias gtoplevel='git rev-parse --show-toplevel'
+alias gps='git push'
+alias gpl='git pull'
+alias gtl='git rev-parse --show-toplevel'
 
 alias ll='ls -al'
 
 autoload colors
 colors
 
+#PROMPT="
+# %{${fg[yellow]}%}%~%{${reset_color}%} 
+#[%F{green}%n%f@%F{white}%U%m%u%f]$ "
+
 PROMPT="
- %{${fg[yellow]}%}%~%{${reset_color}%} 
-[%F{green}%n%f@%F{white}%U%m%u%f]$ "
+ %{${fg[yellow]}%}%~%{${reset_color}%}
+[%F{green}%n%f]$ "
+
 PROMPT2='[%n]> '
 
 # 補完関係
@@ -29,7 +34,6 @@ setopt list_types              # 補完候補にファイルの種類も表示�
 bindkey "^[[Z" reverse-menu-complete  # Shift-Tabで補完候補を逆順する("\e[Z"でも動作する)
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}' # 補完時に大文字小文字を区別しない
 
- 
 # Color
 # 色の設定
 export LSCOLORS=gxfxcxdxbxegedabagacad
@@ -38,7 +42,7 @@ export LSCOLORS=gxfxcxdxbxegedabagacad
 export LS_COLORS='di=01;34:ln=01;35:so=01;32:ex=01;31:bd=46;34:cd=43;34:su=41;30:sg=46;30:tw=42;30:ow=43;30'
 # ZLS_COLORSとは？
 export ZLS_COLORS=$LS_COLORS
-# lsコマンド時、自動で色がつく(ls -Gのようなもの？)
+# lsコマンド時、自動で色がつく
 export CLICOLOR=true
 # 補完候補に色を付ける
 zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
@@ -52,17 +56,22 @@ zstyle ":vcs_info:*" enable git
 zstyle ":vcs_info:git:*" check-for-changes true
 
 # gitリポジトリに対して、変更情報とリポジトリ情報を表示する
-#zstyle ":vcs_info:git:*" formats "%c%u[%b:%r]"
-zstyle ":vcs_info:git:*" formats "%c%u"
+#zstyle ":vcs_info:git:*" formats "%c%u(%b:%r)"
+#zstyle ":vcs_info:git:*" formats "%F{green}%c%u%f"
+#zstyle ":vcs_info:git:*" formats "%F{green}%c%u(%b)%f"
 
 # gitリポジトリに対して、コンフリクトなどの情報を表示する
 #zstyle ":vcs_info:git:*" actionformats "%c%u<%a>[%b:%r]"
-zstyle ":vcs_info:git:*" actionformats "%c%u<%a>"
+#zstyle ":vcs_info:git:*" actionformats "%c%u<%a>"
 
-# addしていない変更があることを示す文字列
-zstyle ":vcs_info:git:*" unstagedstr "%F{196}[Add!(>_<)]%f"
 # commitしていないstageがあることを示す文字列
-zstyle ":vcs_info:git:*" stagedstr "%F{166}[STAGING(*'i')>]%f"
+zstyle ":vcs_info:git:*" stagedstr "%F{yellow}!"
+# addしていない変更があることを示す文字列
+zstyle ":vcs_info:git:*" unstagedstr "%F{red}+"
+
+zstyle ":vcs_info:*" formats "%F{green}%c%u[%b]%f"
+# gitリポジトリに対して、コンフリクトなどの情報を表示する
+zstyle ":vcs_info:*" actionformats "[%b|%a]"
 
 # git：まだpushしていないcommitあるかチェックする
 my_git_info_push () {
@@ -93,8 +102,6 @@ my_vcs_info () {
 
 # プロンプト定義の中で置換を使用する
 setopt prompt_subst
-
+precmd() { vcs_info }
 # プロンプト定義
 RPROMPT=$'$(my_vcs_info)'
-
-
