@@ -82,7 +82,7 @@ my_git_info_push () {
 			if [ "$head" = "$remote" ]; then return 0 ; fi
 		done
 		# pushしていないcommitがあることを示す文字列
-		echo "%F{196}[☀︎ ]%f"
+		#echo "%F{196}[☀︎ ]%f"
 	fi
 }
 
