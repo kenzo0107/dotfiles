@@ -6,8 +6,8 @@ export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
 alias gs='git status'
 alias gb='git branch'
 alias gba='git branch -a'
-alias gps='git push'
-alias gpl='git pull'
+alias gps='git push origin'
+alias gpl='git pull origin'
 alias gtl='git rev-parse --show-toplevel'
 
 alias ll='ls -al'
