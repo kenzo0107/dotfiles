@@ -1,7 +1,12 @@
-PATH=/opt/python-2.7/bin:$PATH
-
+PATH=/opt/python-2.7/bin:/Applications/MAMP/Library/bin:$PATH
 
 export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
+
+# go
+if [ -x "`which go`" ]; then
+  export GOPATH=$HOME/go
+  export PATH=$PATH:$GOPATH/bin
+fi
 
 # git
 alias gs='git status'
@@ -13,6 +18,7 @@ alias gpl='git pull origin'
 alias gtop='git rev-parse --show-toplevel'
 
 alias ll='ls -al'
+alias sl='ls -al'
 
 autoload colors
 colors
