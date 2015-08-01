@@ -1,6 +1,10 @@
-PATH=/opt/python-2.7/bin:/Applications/MAMP/Library/bin:$PATH
-
+# MAMP
+PHP_BIN="/Applications/MAMP/bin/php/php5.6.10/bin"
+export PATH="$PATH:$PHP_BIN"
+MYSQL_BIN="/Applications/MAMP/Library/bin"
+export PATH="$PATH:$MYSQL_BIN"
 export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
+
 
 # go
 if [ -x "`which go`" ]; then
@@ -113,3 +117,9 @@ setopt prompt_subst
 precmd() { vcs_info }
 # プロンプト定義
 RPROMPT=$'$(my_vcs_info)'
+
+# The next line updates PATH for the Google Cloud SDK.
+source '/Users/kenzo/google-cloud-sdk/path.zsh.inc'
+
+# The next line enables bash completion for gcloud.
+source '/Users/kenzo/google-cloud-sdk/completion.zsh.inc'
