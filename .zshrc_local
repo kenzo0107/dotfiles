@@ -1,0 +1,13 @@
+# MAMP
+PHP_BIN="/Applications/MAMP/bin/php/php5.6.10/bin"
+export PATH="$PATH:$PHP_BIN"
+MYSQL_BIN="/Applications/MAMP/Library/bin"
+export PATH="$PATH:$MYSQL_BIN"
+export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
+
+# go
+if [ -x "`which go`" ]; then
+	export GOPATH=$HOME/go
+	export PATH=$PATH:$GOPATH/bin
+	alias ggdb=/usr/local/Cellar/gdb/7.9/bin/gdb
+fi

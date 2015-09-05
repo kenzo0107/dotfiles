@@ -1,0 +1,49 @@
+# ------------------------------
+# function settings
+# ------------------------------
+
+# show commandline stack
+show_buffer_stack() {
+	POSTDISPLAY="
+stack: $LBUFFER"
+	zle push-line-or-edit
+}
+zle -N show_buffer_stack
+setopt noflowcontrol
+bindkey '^Q' show_buffer_stack
+
+# precmd for vcs_info
+precmd() {
+	vcs_info
+
+	[[ -t 1 ]] || return
+	case $TERM in
+		*xterm*|rxvt|(dt|k|E)term)
+		print -Pn "\e]2;[%~]\a"
+	;;
+		# screen)
+		#      #print -Pn "\e]0;[%n@%m %~] [%l]\a"
+		#      print -Pn "\e]0;[%n@%m %~]\a"
+		#      ;;
+	esac
+}
+
+# change java version
+chjava() {
+	export JAVA_HOME=`/usr/libexec/java_home -v $1`
+	echo $JAVA_HOME
+}
+
+# 'cd ..' with C-^
+function cdup() {
+	echo
+	cd ..
+	zle reset-prompt
+}
+zle -N cdup
+bindkey '^^' cdup
+
+# show markdown with lynx
+md() {
+	markdown $1 | w3m -T text/html
+}

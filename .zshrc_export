@@ -1,0 +1,25 @@
+# ------------------------------
+# export settings
+# ------------------------------
+
+# less default options
+export LESS="-iMR"
+
+# bin
+export PATH=$PATH:/usr/libexec
+export PATH=$PATH:~/work/bin
+export PATH=/usr/local/bin:$PATH 
+export PATH=/usr/local/opt/gnu-tar/libexec/gnubin:$PATH
+
+# for debug
+export PS4='+(${BASH_SOURCE}:${LINENO}): ${FUNCNAME:+$FUNCNAME(): }'
+stty -ixon
+
+# java
+export JAVA_HOME=`/usr/libexec/java_home -v 1.8`
+
+# perl
+export PATH=/Users/JP11634/local/perl-5.22.0/bin:$PATH
+
+# play framework
+export PATH=$PATH:/Applications/activator/activator

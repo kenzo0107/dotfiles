@@ -1,0 +1,27 @@
+# ------------------------------
+# aliases
+# ------------------------------
+alias l='less'
+alias ll='ls -al'
+alias ls='ls -G'
+alias sl='ls -al'
+alias rm='rmtrash'
+alias tailf='tail -f'
+alias sudo='sudo '
+alias pgdiff='peco-git-diff'
+alias cdg='peco-git-cd'
+alias ngrep='ngrep -W byline'
+alias trim='tr -d "\r\n\t "'
+alias jq='jq -C'
+alias '?'='cheat show'
+
+# git
+alias gs='git status'
+alias gb='git branch'
+alias gba='git branch -a'
+alias gc='git checkout'
+alias gps='git push origin'
+alias gpl='git pull origin'
+alias gtop='git rev-parse --show-toplevel'
+
+
