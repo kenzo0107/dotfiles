@@ -23,6 +23,7 @@ alias gc='git checkout'
 alias gps='git push origin'
 alias gpl='git pull origin'
 alias gtop='git rev-parse --show-toplevel'
+alias opush='git push origin `git rev-parse --abbrev-ref HEAD`'
 
 # go
 alias gf='gofmt -l -w '
