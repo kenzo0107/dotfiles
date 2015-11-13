@@ -17,4 +17,4 @@ source ~/.vimrc.edit
 "Go関連
 source ~/.vimrc.golang
 " PHP関連
-" source ~/.vimrc.phper
+source ~/.vimrc.phper

@@ -31,6 +31,9 @@ nmap <C-n> <Plug>(yankround-next)
 let g:yankround_max_history = 50
 " カラースキーマ
 NeoBundle 'nanotech/jellybeans.vim'
+NeoBundle 'w0ng/vim-hybrid'
+NeoBundle 'chriskempson/vim-tomorrow-theme'
+
 " Perl 入力サポート
 NeoBundle 'perl-support.vim'
 " CSVカラム操作" コメントトグル

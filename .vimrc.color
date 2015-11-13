@@ -1,10 +1,10 @@
 "-------------------------------------------------------------------------------
 " カラー関連 Colors
 "-------------------------------------------------------------------------------
-let g:hybrid_use_Xresources = 1
-set background=dark
 
+syntax on
 colorscheme hybrid
+set background=dark
 " ターミナルタイプによるカラー設定
 if &term =~ "xterm-256color" || "screen-256color"
   " 256色
@@ -22,7 +22,7 @@ elseif &term =~ "xterm-color"
 endif
 
 " ハイライト on
-syntax enable
+syntax on
 
 " 補完候補の色づけ for vim7
 hi PmenuSel cterm=reverse ctermfg=33 ctermbg=222 gui=reverse guifg=#3399ff guibg=#f0e68c
