@@ -19,6 +19,8 @@ if [ "$(uname)" = 'Darwin' ]; then
 	fi
 fi
 
+alias pwdc='pwd | sed "s/^\(.*\)$/'\''\1'\''/" | tr -d '\''\n'\'' | pbcopy'
+
 # Complement
 fpath=(/usr/local/share/zsh-completions $fpath)
 autoload -U compinit;
