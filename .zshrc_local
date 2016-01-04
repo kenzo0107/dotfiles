@@ -1,3 +1,8 @@
+# Maven
+export M3_HOME=/usr/local/apache-maven-3.3.9
+M3=$M3_HOME/bin
+export PATH=$M3:$PATH
+
 # MAMP
 PHP_BIN="/Applications/MAMP/bin/php/php5.6.10/bin"
 export PATH="$PATH:$PHP_BIN"
