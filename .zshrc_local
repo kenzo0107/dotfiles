@@ -16,3 +16,6 @@ if [ -x "`which go`" ]; then
 	export PATH=$PATH:$GOPATH/bin
 	alias ggdb=/usr/local/Cellar/gdb/7.9/bin/gdb
 fi
+
+export PATH=$HOME/.rbenv/bin:$PATH
+eval "$(rbenv init -)"

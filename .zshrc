@@ -13,3 +13,6 @@ source $HOME/.zshrc_tmux
 source $HOME/.zshrc_local
 source $HOME/.zshrc_cocos
 
+#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="/Users/kenzo/.sdkman"
+[[ -s "/Users/kenzo/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/kenzo/.sdkman/bin/sdkman-init.sh"

@@ -23,3 +23,9 @@ export PATH=/Users/JP11634/local/perl-5.22.0/bin:$PATH
 
 # play framework
 export PATH=$PATH:/Applications/activator/activator
+
+# python
+# '/Users/kenzo/.pyenv/versions/3.4.3/bin'
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
