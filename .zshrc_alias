@@ -1,6 +1,7 @@
 # ------------------------------
 # aliases
 # ------------------------------
+alias v='vagrant '
 alias l='less'
 alias ll='ls -al'
 alias ls='ls -G'
