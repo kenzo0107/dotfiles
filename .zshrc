@@ -11,7 +11,6 @@ source $HOME/.zshrc_general
 source $HOME/.zshrc_tmux
 
 source $HOME/.zshrc_local
-source $HOME/.zshrc_cocos
 
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="/Users/kenzo/.sdkman"
