@@ -52,3 +52,9 @@ export PATH=$PATH:/Applications/activator/activator
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
+
+export SDKMAN_DIR="/Users/kenzo/.sdkman"
+[[ -s "/Users/kenzo/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/kenzo/.sdkman/bin/sdkman-init.sh"
+
+
+
