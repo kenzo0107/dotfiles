@@ -21,4 +21,25 @@ dotfile setting
 $ brew install reattach-to-user-namespace
 ```
 
+## vim
 
+### download NeoBundle
+
+```
+$ mkdir -p ~/.vim/bundle
+$ git clone git://github.com/Shougo/neobundle.vim ~/.vim/bundle/neobundle.vim
+```
+
+### Install
+
+You see vim window, so execute the below command:
+
+```
+:NeoBundleInstall
+```
+
+At the case of Update:
+
+```
+:NeoBundleUpdate
+```
