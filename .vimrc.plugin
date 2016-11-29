@@ -14,12 +14,12 @@ call neobundle#begin(expand('~/.vim/bundle'))
 
 " NeoBundle 'git://github.com/kien/ctrlp.vim.git'
 " NeoBundle 本体
-NeoBundle 'git://github.com/Shougo/neobundle.vim.git'
+NeoBundle 'Shougo/neobundle.vim'
 " NerdTree
-NeoBundle 'git://github.com/scrooloose/nerdtree.git'
+NeoBundle 'scrooloose/nerdtree.git'
 nmap <C-t> :NERDTreeToggle<CR>
 " Ruby的な正規表現を書けるようにする
-NeoBundle 'git://github.com/othree/eregex.vim'
+NeoBundle 'othree/eregex.vim'
 " ヤンク履歴管理(ペースト後C+p/C+n)
 NeoBundle 'LeafCage/yankround.vim'
 nmap p <Plug>(yankround-p)
