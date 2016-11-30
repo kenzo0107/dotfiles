@@ -3,7 +3,7 @@
 # ------------------------------
 alias v='vagrant '
 alias l='less'
-alias ll='ls -al --color=auto'
+alias ll='ls -al'
 alias ls='ls -G'
 alias sl='ls -al'
 alias rm='rmtrash'
