@@ -21,6 +21,12 @@ dotfile setting
 $ brew install reattach-to-user-namespace
 ```
 
+- Linux (centos)
+
+```
+$ yum install -y tmux
+```
+
 ## vim
 
 ### download NeoBundle
