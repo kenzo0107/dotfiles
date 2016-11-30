@@ -44,8 +44,18 @@ You see vim window, so execute the below command:
 :NeoBundleInstall
 ```
 
+![Imgur](http://i.imgur.com/FGwN3Ea.png)
+
 At the case of Update:
 
 ```
 :NeoBundleUpdate
 ```
+
+- Updating
+
+![Imgur](http://i.imgur.com/LOZbz3s.png)
+
+- Complete
+
+![Imgur](http://i.imgur.com/xU6rPnB.png)
