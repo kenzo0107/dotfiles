@@ -1,15 +1,3 @@
-# Maven
-export M3_HOME=/usr/local/apache-maven-3.3.9
-M3=$M3_HOME/bin
-export PATH=$M3:$PATH
-
-# MAMP
-PHP_BIN="/Applications/MAMP/bin/php/php5.6.10/bin"
-export PATH="$PATH:$PHP_BIN"
-MYSQL_BIN="/Applications/MAMP/Library/bin"
-export PATH="$PATH:$MYSQL_BIN"
-export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
-
 # go
 if [ -x "`which go`" ]; then
 	export GOPATH=$HOME/go
@@ -17,44 +5,53 @@ if [ -x "`which go`" ]; then
 	alias ggdb=/usr/local/Cellar/gdb/7.9/bin/gdb
 fi
 
-export PATH=$HOME/.rbenv/bin:$PATH
-eval "$(rbenv init -)"
+# MAMP
+#PHP_BIN="/Applications/MAMP/bin/php/php5.6.10/bin"
+#export PATH="$PATH:$PHP_BIN"
+MYSQL_BIN="/Applications/MAMP/Library/bin"
+export PATH="$PATH:$MYSQL_BIN"
+#export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
+
+# Maven
+#export M3_HOME=/usr/local/apache-maven-3.3.9
+#M3=$M3_HOME/bin
+#export PATH=$M3:$PATH
+
+#export PATH=$HOME/.rbenv/bin:$PATH
+#eval "$(rbenv init -)"
 # ------------------------------
 # export settings
 # ------------------------------
 
 # less default options
-export LESS="-iMR"
+#export LESS="-iMR"
 
 # bin
-export PATH=$PATH:/usr/libexec
-export PATH=$PATH:~/work/bin
-export PATH=/usr/local/bin:$PATH 
-export PATH=/usr/local/opt/gnu-tar/libexec/gnubin:$PATH
-export PATH=/usr/local/Cellar/vim/8.0.0046/bin:$PATH
+#export PATH=$PATH:/usr/libexec
+#export PATH=$PATH:~/work/bin
+#export PATH=/usr/local/bin:$PATH 
+#export PATH=/usr/local/opt/gnu-tar/libexec/gnubin:$PATH
+#export PATH=/usr/local/Cellar/vim/8.0.0046/bin:$PATH
 
 
 # for debug
-export PS4='+(${BASH_SOURCE}:${LINENO}): ${FUNCNAME:+$FUNCNAME(): }'
-stty -ixon
+#export PS4='+(${BASH_SOURCE}:${LINENO}): ${FUNCNAME:+$FUNCNAME(): }'
+#stty -ixon
 
 # java
-export JAVA_HOME=`/usr/libexec/java_home -v 1.8`
+#export JAVA_HOME=`/usr/libexec/java_home -v 1.8`
 
 # perl
-export PATH=/Users/JP11634/local/perl-5.22.0/bin:$PATH
+#export PATH=/Users/JP11634/local/perl-5.22.0/bin:$PATH
 
 # play framework
-export PATH=$PATH:/Applications/activator/activator
+#export PATH=$PATH:/Applications/activator/activator
 
 # python
 # '/Users/kenzo/.pyenv/versions/3.4.3/bin'
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
+#export PYENV_ROOT="$HOME/.pyenv"
+#export PATH="$PYENV_ROOT/bin:$PATH"
+#eval "$(pyenv init -)"
 
-export SDKMAN_DIR="/Users/kenzo/.sdkman"
-[[ -s "/Users/kenzo/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/kenzo/.sdkman/bin/sdkman-init.sh"
-
-
-
+#export SDKMAN_DIR="/Users/kenzo/.sdkman"
+#[[ -s "/Users/kenzo/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/kenzo/.sdkman/bin/sdkman-init.sh"
