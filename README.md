@@ -28,6 +28,10 @@ $ source ~/.zshrc
 
 ```
 $ brew install reattach-to-user-namespace
+
+// set battery-display in header status bar.
+$ brew tap Goles/battery
+$ brew install battery
 ```
 
 - Linux (centos)
@@ -44,7 +48,7 @@ $ yum install -y tmux
 $ curl 'http://vim-bootstrap.com/generate.vim' --data 'langs=go&langs=ruby&langs=php&langs=html&langs=javascript&editor=vim' > ~/dotfiles/.vimrc
 ```
 
-- Plugin Install 
+- Plugin Install
 
 When you try to open vim command, installation of vim-plugin will start.
 
