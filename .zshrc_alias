@@ -31,3 +31,5 @@ alias ccb='echo `git symbolic-ref --short HEAD` | tr -d "\n" ``| pbcopy; pbpaste
 
 # go
 alias gf='gofmt -l -w '
+
+alias tf='terraform'
