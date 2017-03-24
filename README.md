@@ -1,5 +1,12 @@
 # dotfiles
-dotfile setting
+
+## dotfile setting
+
+```
+$ cd ~
+$ git clone https://github.com/kenzo0107/dotfiles
+$ sh dotfiles/symlink.sh
+```
 
 ---
 
@@ -32,8 +39,26 @@ $ yum install -y tmux
 ### download NeoBundle
 
 ```
-$ mkdir -p ~/.vim/bundle
-$ git clone git://github.com/Shougo/neobundle.vim ~/.vim/bundle/neobundle.vim
+$ curl 'http://vim-bootstrap.com/generate.vim' --data 'langs=go&langs=ruby&langs=php&langs=html&langs=javascript&editor=vim' > ~/dotfiles/.vimrc
+```
+
+## Plugin Install 
+
+When you try to open vim command, installation of vim-plugin will start.
+
+
+```
+$ vim
+
+Installing Vim-Plug...
+```
+
+### vim bootstrap update
+
+opening vim, input the below command.
+
+```
+:VimBootstrapUpdate
 ```
 
 ### Install
@@ -42,6 +67,7 @@ You see vim window, so execute the below command:
 
 ```
 :NeoBundleInstall
+:PlugInstall
 ```
 
 ![Imgur](http://i.imgur.com/FGwN3Ea.png)
