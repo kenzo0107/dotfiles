@@ -36,16 +36,15 @@ $ yum install -y tmux
 
 ## vim
 
-### download NeoBundle
+- download .vimrc
 
 ```
 $ curl 'http://vim-bootstrap.com/generate.vim' --data 'langs=go&langs=ruby&langs=php&langs=html&langs=javascript&editor=vim' > ~/dotfiles/.vimrc
 ```
 
-## Plugin Install 
+- Plugin Install 
 
 When you try to open vim command, installation of vim-plugin will start.
-
 
 ```
 $ vim
@@ -53,7 +52,7 @@ $ vim
 Installing Vim-Plug...
 ```
 
-### vim bootstrap update
+- vim bootstrap update
 
 opening vim, input the below command.
 
