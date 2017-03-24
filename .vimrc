@@ -684,3 +684,4 @@ else
   let g:airline_symbols.linenr = ''
 endif
 
+set clipboard+=unnamed

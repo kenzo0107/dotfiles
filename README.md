@@ -8,6 +8,10 @@ $ git clone https://github.com/kenzo0107/dotfiles
 $ sh dotfiles/symlink.sh
 ```
 
+```
+$ source ~/.zshrc
+```
+
 ---
 
 ## zsh
@@ -57,4 +61,19 @@ opening vim, input the below command.
 ```
 :VimBootstrapUpdate
 :PlugInstall
+```
+
+- copy to clipboard in vim
+	* vim version >= 7.4
+	* `+clipboard` required. `vim --version | grep clipboard`
+
+```
+$ echo 'set clipboard+=unnamed' >> ~/.vimrc
+```
+
+```
+$ vim --version | grep clipboard
+
++clipboard       +job             +path_extra      +user_commands
++eval            +mouse_dec       +statusline      -xterm_clipboard
 ```
