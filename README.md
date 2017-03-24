@@ -18,8 +18,6 @@ $ sh dotfiles/symlink.sh
 
 ※ The files For buisiness are named as `.zshrc_(company_name)`
 
----
-
 ## tmux
 
 - First of all, execute the bellowing command for MacOSX.
