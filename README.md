@@ -59,4 +59,5 @@ opening vim, input the below command.
 
 ```
 :VimBootstrapUpdate
+:PlugInstall
 ```
