@@ -6,9 +6,11 @@ if [ -x "`which go`" ]; then
 fi
 
 # MAMP
-MYSQL_BIN="/Applications/MAMP/Library/bin"
-export PATH="$PATH:$MYSQL_BIN"
-export PATH="/usr/local/bin:$PATH"
+#MYSQL_BIN="/Applications/MAMP/Library/bin"
+#export PATH="$PATH:$MYSQL_BIN"
+#export PATH="/usr/local/bin:$PATH"
 
-eval "$(rbenv init -)"
-export PATH="$HOME/.rbenv/shims:$PATH"
+#eval "$(rbenv init -)"
+
+#export PATH="$HOME/.rbenv/shims:$PATH"
+export PATH=/usr/local/Cellar/vim/8.0.0559/bin:$PATH
