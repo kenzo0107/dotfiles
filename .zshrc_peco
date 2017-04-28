@@ -118,7 +118,7 @@ peco-git-cd() {
 
 # select host from local ~/.ssh/config and ssh the host
 function peco-sshconfig-ssh() {
-    local host=$(grep 'Host ' ~/.ssh/config | sort -r | awk '{print $2}' | peco)
+    local host=$(grep 'Host ' ~/.ssh/config | grep -v '*' | sort -r | awk '{print $2}' | peco)
     if [ -n "$host" ]; then
         echo "ssh -F ~/.ssh/config $host\n"
         ssh -F ~/.ssh/config $host
