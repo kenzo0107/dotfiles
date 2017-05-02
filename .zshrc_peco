@@ -131,3 +131,10 @@ function peco-git-atom() {
          atom "$dir"
      fi
 }
+
+function peco-git-sublimetext() {
+     local dir=$(ghq list -p | peco)
+     if [ -n "$dir" ]; then
+         subl "$dir"
+     fi
+}
