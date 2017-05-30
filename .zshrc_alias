@@ -36,4 +36,11 @@ alias ccb='echo `git symbolic-ref --short HEAD` | tr -d "\n" ``| pbcopy; pbpaste
 # go
 alias gf='gofmt -l -w '
 
-alias tf='terraform'
+alias tf='terraform '
+alias tfing='terraforming '
+
+alias dc='docker-compose '
+alias dk='docker '
+alias kg='kubectl get '
+alias kc='kubectl create '
+alias kd='kubectl delete '
