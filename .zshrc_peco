@@ -125,6 +125,16 @@ function peco-sshconfig-ssh() {
     fi
 }
 
+function peco-sshconfig-ssh-with-ip() {
+    local sshconfig=~/.ssh/config
+    local host_ip=$(grep -v '*' $sshconfig | grep -A 1 '^Host ' | perl -pe 's/^Host (.*)\n$/\1/g' | grep 'HostName ' | perl -pe 's/HostName/:/g' | peco)
+    if [ -n "$host_ip" ]; then
+        local host=$(echo $host_ip | awk -F: '{print $1}' | tr -d ' ')
+        echo "ssh -A -F $sshconfig $host\n"
+        ssh -A -F $sshconfig $host
+    fi
+}
+
 function peco-git-atom() {
      local dir=$(ghq list -p | peco)
      if [ -n "$dir" ]; then
