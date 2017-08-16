@@ -31,6 +31,8 @@ alias gpl='git pull origin'
 alias gtop='git rev-parse --show-toplevel'
 alias opush='git push origin `git rev-parse --abbrev-ref HEAD`'
 alias opull='git pull origin `git rev-parse --abbrev-ref HEAD`'
+alias upush='git push upstream `git rev-parse --abbrev-ref HEAD`'
+alias upull='git pull upstream `git rev-parse --abbrev-ref HEAD`'
 alias ccb='echo `git symbolic-ref --short HEAD` | tr -d "\n" ``| pbcopy; pbpaste; echo "";'
 
 # go
