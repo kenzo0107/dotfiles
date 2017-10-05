@@ -47,3 +47,6 @@ alias k8s='kubectl '
 alias kg='k8s get '
 alias kc='k8s create '
 alias kd='k8s delete '
+
+alias motd='cat /etc/motd'
+alias az='azure '
