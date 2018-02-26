@@ -47,3 +47,8 @@ bindkey '^^' cdup
 md() {
 	markdown $1 | w3m -T text/html
 }
+
+sshadd() {
+    ssh-add -D
+    grep 'IdentityFile' ~/.ssh/config | awk '{print "ssh-add",$2}' | sort -r | uniq | sh
+}
