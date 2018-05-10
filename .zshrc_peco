@@ -148,3 +148,14 @@ function peco-git-sublimetext() {
          subl "$dir"
      fi
 }
+
+function peco-login-aws-account() {
+    local account=$(aws-vault ls | awk 'NR>2 {if ($2 != "-") print $2}' | peco)
+    aws-vault login $account
+}
+
+function peco-aws-exec() {
+    local account=$(aws-vault ls | awk 'NR>2 {if ($2 != "-") print $2}' | peco)
+    echo -e "aws-vault exec \"$account\" -- \\" | pbcopy
+}
+
