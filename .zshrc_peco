@@ -159,3 +159,7 @@ function peco-aws-exec() {
     echo -e "aws-vault exec \"$account\" -- \\" | pbcopy
 }
 
+function sshadd() {
+    identityfile=$(find ${HOME}/.ssh -type f | xargs grep 'BEGIN RSA PRIVATE KEY' | awk -F: '{print $1}' | peco)
+    ssh-add $identityfile
+}
