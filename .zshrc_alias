@@ -45,8 +45,10 @@ alias gf='gofmt -l -w '
 
 # terraform
 alias t='terraform '
+alias ti='terraform init'
 alias tg='terraform get -update'
 alias tp='terraform plan'
+alias tf='terraform fmt'
 
 # docker
 alias dc='docker-compose '
