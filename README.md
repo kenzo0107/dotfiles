@@ -12,6 +12,12 @@ $ sh dotfiles/symlink.sh
 $ source ~/.zshrc
 ```
 
+## restart zsh
+
+```
+$ exec zsh -l
+```
+
 ---
 
 ## zsh
