@@ -135,10 +135,10 @@ function peco-sshconfig-ssh-with-ip() {
     fi
 }
 
-function peco-git-atom() {
+function peco-git-visualstudio() {
      local dir=$(ghq list -p | peco)
      if [ -n "$dir" ]; then
-         atom "$dir"
+         code "$dir"
      fi
 }
 
