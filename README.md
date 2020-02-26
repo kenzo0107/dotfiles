@@ -15,7 +15,7 @@ $ source ~/.zshrc
 ## restart zsh
 
 ```
-$ exec zsh -l
+$ exec $SHELL -l
 ```
 
 ---
