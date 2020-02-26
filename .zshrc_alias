@@ -15,12 +15,12 @@ alias cdg='peco-git-cd'
 alias sshc='peco-sshconfig-ssh-with-ip'
 alias ssha='sshadd'
 alias sshi='cat ~/.ssh/conf.d/*.conf > ~/.ssh/config'
-alias pga='peco-git-atom'
-alias pgs='peco-git-sublimetext'
+alias pgv='peco-git-visualstudio'
 alias ngrep='ngrep -W byline'
 alias trim='tr -d "\r\n\t "'
 alias '?'='cheat show'
 alias pass='cat /dev/urandom | LC_CTYPE=C tr -dc "[:alnum:]" | head -c 40 | pbcopy'
+alias ssm='gossm start -p '
 
 # git
 alias gs='git status'
@@ -57,11 +57,15 @@ alias 'dk-purge'='docker image prune -a'
 
 # kubectl
 alias k='kubectl'
-alias kg='kubectl get '
-alias ka='kubectl apply '
-alias kd='kubectl delete '
+alias kg='kubectl get -o wide '
+alias ka='kubectl apply --record '
+alias kd='kubectl describe '
+alias ke='kubectl exec '
+alias kl='kubectl logs '
 alias ke='kubectl exec '
 
+# message of the day
 alias motd='cat /etc/motd'
-alias avl='peco-login-aws-account'
-alias ave='peco-aws-exec'
+
+# https://github.com/reireias/switcher
+alias sw='switcher'
