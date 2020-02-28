@@ -69,3 +69,6 @@ alias motd='cat /etc/motd'
 
 # https://github.com/reireias/switcher
 alias sw='switcher'
+
+# saw()
+alias sl='peco-saw-loggroup'
