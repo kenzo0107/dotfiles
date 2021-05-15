@@ -1,8 +1,6 @@
 # ------------------------------
 # aliases
 # ------------------------------
-alias v='vagrant '
-alias vs='vagrant status'
 alias l='less'
 alias ll='ls -al'
 alias ls='ls -G'
@@ -10,45 +8,42 @@ alias sl='ls -al'
 alias rm='rmtrash'
 alias tailf='tail -f'
 alias sudo='sudo '
-alias pgdiff='peco-git-diff'
-alias cdg='peco-git-cd'
-alias sshc='peco-sshconfig-ssh-with-ip'
+alias pgdiff='git-diff'
+alias cdg='git-cd'
+alias sshc='sshconfig-ssh-with-ip'
 alias ssha='sshadd'
 alias sshi='cat ~/.ssh/conf.d/*.conf > ~/.ssh/config'
-alias pgv='peco-git-visualstudio'
+alias pgv='git-visualstudio'
 alias ngrep='ngrep -W byline'
 alias trim='tr -d "\r\n\t "'
 alias '?'='cheat show'
 alias pass='cat /dev/urandom | LC_CTYPE=C tr -dc "[:alnum:]" | head -c 40 | pbcopy'
 alias ssm='gossm start -p '
+alias len='string_length'
+alias sed='gsed'
 
 # git
 alias gs='git status'
 alias gb='git branch'
 alias gba='git branch -a'
 alias gc='git checkout'
-alias gh='hub browse $(ghq list | peco | cut -d "/" -f 2,3)'
-alias gps='git push origin'
-alias gpl='git pull origin'
+alias gh='hub browse $(ghq list | fzf | cut -d "/" -f 2,3)'
+
 alias gtop='git rev-parse --show-toplevel'
 alias gl='git log --oneline'
 alias gm='git merge --no-ff '
-alias opush='git push origin `git rev-parse --abbrev-ref HEAD`'
+alias opush='git_push_to_current_branch'
+alias ofpush='git push --force-with-lease origin `git rev-parse --abbrev-ref HEAD`'
 alias opull='git pull origin `git rev-parse --abbrev-ref HEAD`'
 alias upush='git push upstream `git rev-parse --abbrev-ref HEAD`'
 alias upull='git pull upstream `git rev-parse --abbrev-ref HEAD`'
-alias hpush='git push heroku `git rev-parse --abbrev-ref HEAD`'
 alias ccb='echo `git symbolic-ref --short HEAD` | tr -d "\n" ``| pbcopy; pbpaste; echo "";'
 
-# go
-alias gf='gofmt -l -w '
-
 # terraform
-alias t='terraform '
+alias tf='terraform '
 alias ti='terraform init'
 alias tg='terraform get -update'
 alias tp='terraform plan'
-alias tf='terraform fmt'
 
 # docker
 alias dc='docker-compose '
@@ -70,5 +65,10 @@ alias motd='cat /etc/motd'
 # https://github.com/reireias/switcher
 alias sw='switcher'
 
-# saw()
-alias sl='peco-saw-loggroup'
+# aws
+alias awsid='aws sts get-caller-identity'
+alias sl='saw-loggroup'
+
+alias awsume=". $(pyenv which awsume)"
+
+alias chrome="/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome"
