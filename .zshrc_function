@@ -47,3 +47,28 @@ bindkey '^^' cdup
 md() {
 	markdown $1 | w3m -T text/html
 }
+
+function pdfmin() {
+    local cnt=0
+    for i in $@; do
+        gs -sDEVICE=pdfwrite \
+           -dCompatibilityLevel=1.4 \
+           -dPDFSETTINGS=/ebook \
+           -dNOPAUSE -dQUIET -dBATCH \
+           -sOutputFile=${i%%.*}.min.pdf ${i} 
+    done
+}
+
+git_push_to_current_branch() {
+    branch=$(git rev-parse --abbrev-ref HEAD)
+    if [ "$branch" = "master" ]; then
+        echo "you shouldn't push to master"
+        exit 1
+    fi
+    git push origin $branch
+}
+
+string_length() {
+  local target_string=$1
+  echo ${#target_string}
+}
