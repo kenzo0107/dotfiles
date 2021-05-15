@@ -1,0 +1,108 @@
+# ------------------------------
+# peco settings
+# ------------------------------
+
+# select command history
+function select-history() {
+	local tac
+	if which tac > /dev/null; then
+		tac="tac"
+	else
+		tac="tail -r"
+	fi
+	BUFFER=$(history -n 1 | \
+		eval $tac | \
+		awk '!a[$0]++' | \
+		fzf --query "$LBUFFER")
+	CURSOR=$#BUFFER
+}
+zle -N select-history
+bindkey '^R' select-history
+
+# select git branch name
+git-branch () {
+	if git rev-parse 2> /dev/null; then
+		local branch=$(git branch -a | fzf | cut -c 3- | awk '{print $1}')
+		if [ -n "$branch" ]; then
+			BUFFER="$BUFFER${branch}"
+			CURSOR=$#BUFFER
+		fi
+	fi
+}
+zle -N git-branch
+bindkey '^G^B' git-branch
+
+# select git diff
+git-diff() {
+	if git rev-parse 2> /dev/null; then
+		local commit1="$1"
+		local commit2="$1"
+		if [ $# -eq 0 ]; then
+			commit1=$(git log --pretty=format:"%h %ad | %s%d [%an]" | fzf | awk '{print $1}')
+			if [ -n "$commit1" ]; then
+				commit2=$(git log --pretty=format:"%h %ad | %s%d [%an]" | fzf | awk '{print $1}')
+			fi
+		elif [ -n $2 ]; then
+			commit2="$2"
+		fi
+		if [ -n "$commit2" ]; then
+			local target=$(git diff --stat=1024 $commit1 $commit2 | sed -e '$d' | fzf | awk '{print $1}')
+			if [ -n "$target" ]; then
+				vimdiff <(git show $commit1:$target) <(git show $commit2:$target)
+			fi
+		fi
+	fi
+}
+
+# select process id
+pid() {
+	local pid=`ps -ef | fzf | awk '{ print $2 }'`
+	BUFFER="$BUFFER${pid}"
+	CURSOR=$#BUFFER
+}
+zle -N pid
+bindkey '^_' pid
+
+# select local git repository
+git-cd() {
+	local dir=$(ghq list -p | fzf)
+	if [ -n "$dir" ]; then
+		cd $dir
+	fi
+}
+
+# select host from local ~/.ssh/config and ssh the host
+function sshconfig-ssh() {
+    local host=$(grep 'Host ' ~/.ssh/config | grep -v '*' | sort -r | awk '{print $2}' | fzf)
+    if [ -n "$host" ]; then
+        echo "ssh -F ~/.ssh/config $host\n"
+        ssh -F ~/.ssh/config $host
+    fi
+}
+
+function sshconfig-ssh-with-ip() {
+    local sshconfig=~/.ssh/config
+    local host_ip=$(grep -v '*' $sshconfig | grep -A 1 '^Host ' | perl -pe 's/^Host (.*)\n$/\1/g' | grep 'HostName ' | perl -pe 's/HostName/:/g' | fzf)
+    if [ -n "$host_ip" ]; then
+        local host=$(echo $host_ip | awk -F: '{print $1}' | tr -d ' ')
+        echo "ssh -A -F $sshconfig $host\n"
+        ssh -A -F $sshconfig $host
+    fi
+}
+
+function git-visualstudio() {
+     local dir=$(ghq list -p | fzf)
+     if [ -n "$dir" ]; then
+         code "$dir"
+     fi
+}
+
+function sshadd() {
+    identityfile=$(find ${HOME}/.ssh -type f | xargs grep 'BEGIN RSA PRIVATE KEY' | awk -F: '{print $1}' | fzf)
+    ssh-add $identityfile
+}
+
+function saw-loggroup() {
+    local loggroup=$(saw groups | fzf)
+    saw watch $loggroup
+}
