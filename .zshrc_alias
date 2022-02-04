@@ -6,7 +6,6 @@ alias ll='ls -al'
 alias ls='ls -G'
 alias sl='ls -al'
 alias rm='rmtrash'
-alias tailf='tail -f'
 alias sudo='sudo '
 alias pgdiff='git-diff'
 alias cdg='git-cd'
@@ -18,25 +17,21 @@ alias ngrep='ngrep -W byline'
 alias trim='tr -d "\r\n\t "'
 alias '?'='cheat show'
 alias pass='cat /dev/urandom | LC_CTYPE=C tr -dc "[:alnum:]" | head -c 40 | pbcopy'
-alias ssm='gossm start -p '
 alias len='string_length'
 alias sed='gsed'
 
 # git
 alias gs='git status'
 alias gb='git branch'
-alias gba='git branch -a'
 alias gc='git checkout'
 
 alias gtop='git rev-parse --show-toplevel'
 alias gl='git log --oneline'
-alias gm='git merge --no-ff '
 alias opush='git_push_to_current_branch'
 alias ofpush='git push --force-with-lease origin `git rev-parse --abbrev-ref HEAD`'
 alias opull='git pull origin `git rev-parse --abbrev-ref HEAD`'
 alias upush='git push upstream `git rev-parse --abbrev-ref HEAD`'
 alias upull='git pull upstream `git rev-parse --abbrev-ref HEAD`'
-alias ccb='echo `git symbolic-ref --short HEAD` | tr -d "\n" ``| pbcopy; pbpaste; echo "";'
 
 # terraform
 alias tf='terraform '
@@ -49,15 +44,6 @@ alias dc='docker-compose '
 alias dk='docker '
 alias 'dk-purge'='docker image prune -a'
 
-# kubectl
-alias k='kubectl'
-alias kg='kubectl get -o wide '
-alias ka='kubectl apply --record '
-alias kd='kubectl describe '
-alias ke='kubectl exec '
-alias kl='kubectl logs '
-alias ke='kubectl exec '
-
 # message of the day
 alias motd='cat /etc/motd'
 
@@ -67,6 +53,3 @@ alias sw='switcher'
 # aws
 alias awsid='aws sts get-caller-identity'
 alias awsume=". $(asdf which awsume) --session-name kenzo.tanaka"
-
-# Chrome
-alias chrome="/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome"
