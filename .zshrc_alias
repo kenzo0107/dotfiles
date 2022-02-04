@@ -66,8 +66,6 @@ alias sw='switcher'
 
 # aws
 alias awsid='aws sts get-caller-identity'
-alias sl='saw-loggroup'
-
 alias awsume=". $(pyenv which awsume)"
 
 alias chrome="/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome"
