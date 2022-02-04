@@ -27,7 +27,6 @@ alias gs='git status'
 alias gb='git branch'
 alias gba='git branch -a'
 alias gc='git checkout'
-alias gh='hub browse $(ghq list | fzf | cut -d "/" -f 2,3)'
 
 alias gtop='git rev-parse --show-toplevel'
 alias gl='git log --oneline'
