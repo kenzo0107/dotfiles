@@ -19,9 +19,6 @@ if [ "$(uname)" = 'Darwin' ]; then
 	fi
 fi
 
-alias pwdc='pwd | sed "s/^\(.*\)$/'\''\1'\''/" | tr -d '\''\n'\'' | pbcopy'
-alias cpwd='pwd | sed "s/^\(.*\)$/\1/" | tr -d "\n" | pbcopy'
-
 # Complement
 fpath=(/usr/local/share/zsh-completions $fpath)
 autoload -Uz compinit;
@@ -50,3 +47,19 @@ zle -N history-beginning-search-backward-end history-search-end
 zle -N history-beginning-search-forward-end history-search-end
 bindkey "^P" history-beginning-search-backward-end
 bindkey "^N" history-beginning-search-forward-end
+
+# direnv
+eval "$(direnv hook zsh)"
+
+# go 
+export GOPATH=$HOME
+export PATH=$PATH:$GOPATH/bin
+
+# fzf: fuzzy finder
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# asdf
+. /usr/local/opt/asdf/asdf.sh
+
+# for git signing commit
+export GPG_TTY=$(tty)
