@@ -29,13 +29,13 @@ brew install peco
 brew install jq
 brew install md5sha1sum
 brew install nkf
+brew install fzf
 brew install tmux
 brew install reattach-to-user-namespace
 brew install direnv
 brew install git-secrets
 
 brew install sourcetree --cask
-brew install spectacle --cask
 brew install iterm2 --cask
 brew install skitch --cask
 brew install slack --cask
@@ -45,3 +45,8 @@ brew install visual-studio-code --cask
 
 # remove outdated versions.
 brew cleanup
+
+
+# not support brew install for spectacle
+# see:
+# brew install spectacle --cask

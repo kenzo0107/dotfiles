@@ -9,5 +9,5 @@ shell_path=$(cd $(dirname $0);pwd)
 
 cat ${shell_path}/extensions | while read ex
 do
-  code --install $ex
+  code --install-extension $ex
 done
