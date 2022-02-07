@@ -88,6 +88,14 @@ $ vim --version | grep clipboard
 +eval            +mouse_dec       +statusline      -xterm_clipboard
 ```
 
+## brew
+
+http://brew.sh/
+
+```console
+sh brew.sh
+```
+
 ## asdf
 
 https://github.com/asdf-vm/asdf
