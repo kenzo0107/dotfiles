@@ -171,7 +171,7 @@ else
   let g:indentLine_char = '┆'
   let g:indentLine_faster = 1
 
-  
+
   if $COLORTERM == 'gnome-terminal'
     set term=gnome-256color
   else
@@ -179,7 +179,7 @@ else
       set term=xterm-256color
     endif
   endif
-  
+
 endif
 
 
@@ -651,4 +651,5 @@ else
   let g:airline_symbols.linenr = ''
 endif
 
+" copy clipboard
 set clipboard+=unnamed

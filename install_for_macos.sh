@@ -20,3 +20,6 @@ done
 
 # vim
 ln -fs ${shell_path}/vim/.vimrc ~/
+
+# vscode
+ln -fs ${shell_path}/vscode/settings.json ~/Library/Application\ Support/Code/User/
