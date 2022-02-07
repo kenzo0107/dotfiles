@@ -3,16 +3,10 @@
 ## dotfile setting
 
 ```
-$ cd ~
-$ git clone https://github.com/kenzo0107/dotfiles
-$ sh dotfiles/symlink.sh
+$ sh install_for_macos.sh
 ```
 
-```
-$ source ~/.zshrc
-```
-
-## restart zsh
+## restart shell
 
 ```
 $ exec $SHELL -l
