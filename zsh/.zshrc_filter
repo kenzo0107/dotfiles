@@ -72,14 +72,6 @@ git-cd() {
 }
 
 # select host from local ~/.ssh/config and ssh the host
-function sshconfig-ssh() {
-    local host=$(grep 'Host ' ~/.ssh/config | grep -v '*' | sort -r | awk '{print $2}' | fzf)
-    if [ -n "$host" ]; then
-        echo "ssh -F ~/.ssh/config $host\n"
-        ssh -F ~/.ssh/config $host
-    fi
-}
-
 function sshconfig-ssh-with-ip() {
     local sshconfig=~/.ssh/config
     local host_ip=$(grep -v '*' $sshconfig | grep -A 1 '^Host ' | perl -pe 's/^Host (.*)\n$/\1/g' | grep 'HostName ' | perl -pe 's/HostName/:/g' | fzf)
@@ -100,9 +92,4 @@ function git-visualstudio() {
 function sshadd() {
     identityfile=$(find ${HOME}/.ssh -type f | xargs grep 'BEGIN RSA PRIVATE KEY' | awk -F: '{print $1}' | fzf)
     ssh-add $identityfile
-}
-
-function saw-loggroup() {
-    local loggroup=$(saw groups | fzf)
-    saw watch $loggroup
 }

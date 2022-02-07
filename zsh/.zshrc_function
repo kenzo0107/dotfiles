@@ -28,12 +28,6 @@ precmd() {
 	esac
 }
 
-# change java version
-chjava() {
-	export JAVA_HOME=`/usr/libexec/java_home -v $1`
-	echo $JAVA_HOME
-}
-
 # 'cd ..' with C-^
 function cdup() {
 	echo
