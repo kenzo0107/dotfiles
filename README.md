@@ -1,5 +1,16 @@
 # dotfiles
 
+
+## vscode
+
+https://code.visualstudio.com/
+
+install extensions
+
+```
+$ sh vscode/install_extensions.sh
+```
+
 ## dotfile setting
 
 ```

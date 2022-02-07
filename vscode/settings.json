@@ -1,0 +1,82 @@
+{
+    "workbench.startupEditor": "newUntitledFile",
+    "typescript.tsserver.useSeparateSyntaxServer": false,
+    "explorer.confirmDragAndDrop": false,
+    "explorer.confirmDelete": false,
+    "terraform.languageServer": {
+        "external": true,
+        "args": [
+            "serve"
+        ]
+    },
+    "[terraform]": {
+        "editor.formatOnSave": true
+    },
+    "terminal.integrated.rendererType": "dom",
+    "files.trimTrailingWhitespace": true,
+    "files.trimFinalNewlines": true,
+    "files.insertFinalNewline": true,
+    "files.autoSave": "off",
+    // go
+    "go.lintTool":"golangci-lint",
+    "go.lintFlags": [
+        "--fast"
+    ],
+    "go.formatTool": "goimports",
+    "gitlens.advanced.messages": {
+        "suppressLineUncommittedWarning": true
+    },
+    "go.useLanguageServer": true,
+    "go.toolsManagement.autoUpdate": true,
+    "go.goroot": "",
+    "hediet.vscode-drawio.local-storage": "eyIuZHJhd2lvLWNvbmZpZyI6IntcImxhbmd1YWdlXCI6XCJcIixcImN1c3RvbUZvbnRzXCI6W10sXCJsaWJyYXJpZXNcIjpcImdlbmVyYWw7YXdzMzthd3M0Yjthd3M0XCIsXCJjdXN0b21MaWJyYXJpZXNcIjpbXCJMLnNjcmF0Y2hwYWRcIl0sXCJwbHVnaW5zXCI6W10sXCJyZWNlbnRDb2xvcnNcIjpbXSxcImZvcm1hdFdpZHRoXCI6XCIyNDBcIixcImNyZWF0ZVRhcmdldFwiOmZhbHNlLFwicGFnZUZvcm1hdFwiOntcInhcIjowLFwieVwiOjAsXCJ3aWR0aFwiOjgyNyxcImhlaWdodFwiOjExNjl9LFwic2VhcmNoXCI6dHJ1ZSxcInNob3dTdGFydFNjcmVlblwiOnRydWUsXCJncmlkQ29sb3JcIjpcIiNkMGQwZDBcIixcImRhcmtHcmlkQ29sb3JcIjpcIiM2ZTZlNmVcIixcImF1dG9zYXZlXCI6dHJ1ZSxcInJlc2l6ZUltYWdlc1wiOm51bGwsXCJvcGVuQ291bnRlclwiOjAsXCJ2ZXJzaW9uXCI6MTgsXCJ1bml0XCI6MSxcImlzUnVsZXJPblwiOmZhbHNlLFwidWlcIjpcIlwifSJ9",
+    "hediet.vscode-drawio.offline": false,
+    // python
+    "[python]": {
+        "gitlens.codeLens.symbolScopes": [
+            "!Module"
+        ]
+    },
+    "python.pythonPath": "/Users/kenzo.tanaka/.asdf/shims/python",
+    // python - formatter
+    "python.formatting.provider": "black",
+    "python.formatting.blackArgs": [
+        "--skip-string-normalization"
+    ],
+    "python.languageServer": "Pylance",
+    // python - linter
+    "python.linting.pylintEnabled": false,
+    "python.linting.flake8Enabled": true,
+    "python.linting.flake8Args": [
+        "--max-line-length 119",
+        "--max-complexity=20"
+    ],
+    "python.linting.mypyEnabled": true,
+    "python.linting.banditEnabled": true,
+    "python.linting.lintOnSave": true,
+    "editor.formatOnPaste": false,
+    "diffEditor.ignoreTrimWhitespace": false,
+    // javascript
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+    },
+    "eslint.alwaysShowStatus": true,
+    "eslint.codeAction.showDocumentation": {
+        "enable": true
+    },
+    "eslint.packageManager": "yarn",
+    "debug.javascript.autoAttachFilter": "always",
+    "eslint.format.enable": true,
+    "editor.formatOnSave": true,
+    "prettier.tabWidth": 2,
+    "prettier.jsxSingleQuote": true,
+    "eslint.run": "onSave",
+    "eslint.nodePath": "",
+    "javascript.format.insertSpaceBeforeFunctionParenthesis": true,
+    "editor.tokenColorCustomizations": null,
+    "python.defaultInterpreterPath": "/Users/kenzo.tanaka/.asdf/shims/python",
+    "json.schemas": [],
+    "aws.profile": "profile:default",
+    "prettier.singleQuote": true,
+    "window.zoomLevel": -1
+}
