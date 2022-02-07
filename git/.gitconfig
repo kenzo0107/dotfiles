@@ -1,0 +1,39 @@
+[core]
+  excludesfile = ~/.gitignore_global
+  editor = vim
+  quotepath = false
+  commitGraph = true
+[protocol]
+  version = 2
+[user]
+  name = Kenzo Tanaka
+  email = kenzo.tanaka0107@gmail.com
+  signingkey = 7062AF5B7AB0970A
+[commit]
+  gpgsign = true
+  cleanup = scissors
+[tag]
+  gpgSign = true
+[fetch]
+  prune = true
+[mergetool]
+  keepBackup = false
+[push]
+  default = current
+[rebase]
+  autosquash = true
+  autoStash = true
+[status]
+  branch = true
+[include]
+  path = ~/ghq/github.com/kenzo0107/.gitconfig
+[diff]
+	noprefix = true
+[init]
+	defaultBranch = main
+[difftool "sourcetree"]
+	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
+	path = 
+[mergetool "sourcetree"]
+	cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+	trustExitCode = true
