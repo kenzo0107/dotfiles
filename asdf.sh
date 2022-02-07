@@ -4,10 +4,10 @@
 readonly GLOBAL_VERSION=3.9.10
 
 # python
+asdf plugin add python
 asdf install python $GLOBAL_VERSION
 $(asdf which pip) install --upgrade pip
-$(asdf which pip) install pipenv
-$(asdf which pipenv) install awsume
+$(asdf which pip) install awsume
 asdf global python $GLOBAL_VERSION
 asdf reshim python
 
