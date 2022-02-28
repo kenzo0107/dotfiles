@@ -28,3 +28,10 @@ asdf plugin add golang
 asdf install golang latest
 asdf global golang $(asdf latest golang)
 asdf reshim golang
+
+# nodejs
+asdf plugin add nodejs
+asdf install nodejs latest
+asdf global nodejs $(asdf latest nodejs)
+npm i -g yarn
+asdf reshim nodejs
