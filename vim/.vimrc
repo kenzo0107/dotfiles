@@ -44,6 +44,8 @@ Plug 'scrooloose/syntastic'
 Plug 'Yggdroot/indentLine'
 Plug 'avelino/vim-bootstrap-updater'
 Plug 'sheerun/vim-polyglot'
+Plug 'sheerun/vim-polyglot'
+Plug 'ConradIrwin/vim-bracketed-paste'
 
 let g:make = 'gmake'
 if exists('make')
@@ -91,7 +93,7 @@ filetype plugin indent on
 
 "*****************************************************************************
 "" Basic Setup
-"*****************************************************************************"
+"*****************************************************************************
 "" Encoding
 set encoding=utf-8
 set fileencoding=utf-8
@@ -102,6 +104,9 @@ set ttyfast
 
 "" Fix backspace indent
 set backspace=indent,eol,start
+
+set list
+set listchars=tab:»-,trail:-,extends:»,precedes:«,nbsp:%
 
 "" Tabs. May be overriten by autocmd rules
 set tabstop=4
