@@ -20,6 +20,7 @@ brew install trash
 brew install wget
 brew install the_silver_searcher
 brew install gpg
+brew install pinentry-mac
 
 # language management
 brew install asdf
