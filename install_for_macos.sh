@@ -23,3 +23,6 @@ ln -fs ${shell_path}/vim/.vimrc ~/
 
 # vscode
 ln -fs ${shell_path}/vscode/settings.json ~/Library/Application\ Support/Code/User/
+
+# gpg
+ln -fs ${shell_path}/gpg/gpg-agent.conf ~/.gnupg/
