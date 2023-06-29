@@ -19,6 +19,7 @@ alias '?'='cheat show'
 alias pass='cat /dev/urandom | LC_CTYPE=C tr -dc "[:alnum:]" | head -c 40 | pbcopy'
 alias len='string_length'
 alias sed='gsed'
+alias lg='lazygit'
 
 # git
 alias gs='git status'

@@ -35,6 +35,7 @@ brew install tmux
 brew install reattach-to-user-namespace
 brew install direnv
 brew install git-secrets
+brew install lazygit
 
 brew install sourcetree --cask
 brew install iterm2 --cask
