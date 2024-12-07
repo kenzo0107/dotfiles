@@ -1,3 +1,4 @@
+set tw=0
 "*****************************************************************************
 "" Vim-PLug core
 "*****************************************************************************
@@ -7,7 +8,7 @@ endif
 
 let vimplug_exists=expand('~/.vim/autoload/plug.vim')
 
-let g:vim_bootstrap_langs = "go,ruby,python,php,html,javascript"
+let g:vim_bootstrap_langs = ""
 let g:vim_bootstrap_editor = "vim"				" nvim or vim
 
 if !filereadable(vimplug_exists)

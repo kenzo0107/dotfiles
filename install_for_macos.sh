@@ -11,6 +11,7 @@ done
 # tmux
 ln -fs ${shell_path}/.tmux.conf ~/
 ln -fs ${shell_path}/getwifi.sh ~/
+ln -fs ${shell_path}/clear_github_profile_status.sh ~/
 
 # git
 for filename in `ls -A ./git/`

@@ -53,13 +53,10 @@ eval "$(direnv hook zsh)"
 
 # go 
 export GOPATH=$HOME
+export GOBIN=$HOME/bin
+#export PATH=/opt/homebrew/bin:$PATH:$GOPATH/bin
 export PATH=$PATH:$GOPATH/bin
 
 # fzf: fuzzy finder
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-# asdf
-. /usr/local/opt/asdf/asdf.sh
-
-# for git signing commit
-export GPG_TTY=$(tty)
