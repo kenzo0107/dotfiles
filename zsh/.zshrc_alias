@@ -33,6 +33,9 @@ alias opull='git pull origin `git rev-parse --abbrev-ref HEAD`'
 alias upush='git push upstream `git rev-parse --abbrev-ref HEAD`'
 alias upull='git pull upstream `git rev-parse --abbrev-ref HEAD`'
 
+alias clear_github_profile_status='~/clear_github_profile_status.sh'
+alias miteras_check_in='miteras clock-in && ~/clear_github_profile_status.sh'
+
 # terraform
 alias tf='terraform '
 alias ti='terraform init'
