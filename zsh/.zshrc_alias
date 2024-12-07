@@ -51,5 +51,5 @@ alias motd='cat /etc/motd'
 alias sw='switcher'
 
 # aws
-alias awsid='aws sts get-caller-identity'
+alias awsid='aws sts get-caller-identity --query "Account" --output text | pbcopy'
 alias awsume=". $(asdf which awsume) --session-name kenzo.tanaka"
