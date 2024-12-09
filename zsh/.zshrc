@@ -9,4 +9,4 @@ source $HOME/.zshrc_alias
 source $HOME/.zshrc_general
 source $HOME/.zshrc_tmux
 
-. /usr/local/opt/asdf/libexec/asdf.sh
+. "/opt/homebrew/opt/asdf/libexec/asdf.sh"
