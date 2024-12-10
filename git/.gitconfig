@@ -27,6 +27,8 @@
   branch = true
 [include]
   path = ~/ghq/github.com/kenzo0107/.gitconfig
+[include]
+  path = ~/.gitconfig_private
 [diff]
 	noprefix = true
 [init]

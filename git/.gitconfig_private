@@ -1,0 +1,3 @@
+# 仕事用 GitHub 組織化では会社用の GitHub アカウントに切り替える
+[includeIf "gitdir:~/ghq/github.com/<org>/"]
+  path = ~/ghq/github.com/<org>/.gitconfig
