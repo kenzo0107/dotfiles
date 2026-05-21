@@ -3,6 +3,7 @@
   editor = vim
   quotepath = false
   commitGraph = true
+	pager = less -X
 [protocol]
   version = 2
 [user]
@@ -26,8 +27,6 @@
 [status]
   branch = true
 [include]
-  path = ~/ghq/github.com/kenzo0107/.gitconfig
-[include]
   path = ~/.gitconfig_private
 [diff]
 	noprefix = true
@@ -36,6 +35,5 @@
 [difftool "sourcetree"]
 	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
 	path = 
-[mergetool "sourcetree"]
-	cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
-	trustExitCode = true
+[credential]
+	helper = osxkeychain
