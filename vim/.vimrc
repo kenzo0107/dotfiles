@@ -1,3 +1,8 @@
+autocmd FileType gitcommit setlocal formatoptions-=tcro
+
+set paste
+
+set nowrap
 "文字コードをUFT-8に設定
 set fenc=utf-8
 " バックアップファイルを作らない
@@ -54,3 +59,4 @@ set wrapscan
 set hlsearch
 " ESC連打でハイライト解除
 nmap <Esc><Esc> :nohlsearch<CR><Esc>
+set tw=0

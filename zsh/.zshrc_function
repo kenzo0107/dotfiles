@@ -66,3 +66,13 @@ string_length() {
   local target_string=$1
   echo ${#target_string}
 }
+
+generate_password() {
+  # 第一引数で文字数を指定、デフォルトは 16
+  length=${1:-16}
+
+  # 半角英数字のみで生成
+  echo $(LC_ALL=C tr -dc 'A-Za-z0-9' < /dev/urandom | head -c "$length")
+echo
+}
+
