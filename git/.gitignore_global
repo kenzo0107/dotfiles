@@ -1,2 +1,10 @@
 *.DS_Store
 *.swp
+**/.claude/settings.local.json
+
+# direnv のローカル設定。秘匿情報を環境変数に置くため追跡しない
+.envrc
+
+# mise のローカル上書き設定。.envrc の代替として秘匿情報を置くため追跡しない
+mise.local.toml
+.mise.local.toml
