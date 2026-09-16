@@ -27,3 +27,10 @@ ln -fs ${shell_path}/vscode/settings.json ~/Library/Application\ Support/Code/Us
 
 # gpg
 ln -fs ${shell_path}/gpg/gpg-agent.conf ~/.gnupg/
+
+# bin
+mkdir -p ~/.local/bin
+for filename in `ls -A ./bin/`
+do
+  ln -fs ${shell_path}/bin/${filename} ~/.local/bin/
+done

@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# 自分が作成した未マージ（オープン中）の PR のタイトルと URL を出力する
+# 使い方: open-prs [owner]   （owner 省略時は全 owner が対象）
+# 対象ユーザーは gh のログインアカウント。環境変数 OPEN_PRS_AUTHOR で上書き可
+
+set -euo pipefail
+
+AUTHOR="${OPEN_PRS_AUTHOR:-$(gh api user --jq .login)}"
+OWNER="${1:-}"
+
+args=(--author="${AUTHOR}" --state=open --limit 100 --json title,url)
+[[ -n "${OWNER}" ]] && args+=(--owner="${OWNER}")
+
+# ターミナル出力時は OSC 8 ハイパーリンクでタイトルをクリック可能にする
+# パイプ・リダイレクト時は Markdown 形式にフォールバック
+if [[ -t 1 ]]; then
+  jq_filter='.[] | "- ]8;;\(.url)\\\(.title)]8;;\\"'
+else
+  jq_filter='.[] | "- [\(.title)](\(.url))"'
+fi
+
+result=$(gh search prs "${args[@]}" --jq "${jq_filter}")
+
+if [[ -z "${result}" ]]; then
+  echo "未マージの PR はありません"
+else
+  echo "${result}"
+fi
