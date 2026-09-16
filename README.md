@@ -57,6 +57,12 @@ https://github.com/tmux/tmux/wiki
 $ brew install reattach-to-user-namespace
 ```
 
+## bin
+
+`bin/` 配下のスクリプトは `install_for_macos.sh` で `~/.local/bin/` にシンボリックリンクされる。
+
+- `open-prs [owner]` - 自分が作成したオープン中の PR を一覧表示する（対象ユーザーは `gh` のログインアカウント。`OPEN_PRS_AUTHOR` で上書き可）
+
 ## vim
 
 - Plugin Install
