@@ -1,0 +1,478 @@
+#!/usr/bin/env bash
+# applyboard - terraform apply の承認待ち・詰まりを1待ち1行で俯瞰する
+#
+# マージ前を見る prboard と対になるツール。マージ後 apply されるまでを見る。
+set -uo pipefail
+
+ORG="medpeer-dev"
+SOURCE_REPO="github-terraform"
+SOURCE_PATH="envs/terraform-repositories/repos"
+CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/applyboard"
+CACHE_TTL=86400
+
+usage() {
+    cat <<'EOS'
+Usage: applyboard [options]
+
+terraform apply の承認待ちと詰まりを1待ち1行で表示する。
+
+Options:
+  --mine                  自分が承認できる待ちだけ表示する
+  --queued-threshold <m>  QUEUE 行を出す閾値(分, 既定 30)
+  --sort <key>            age (既定) | repo | state
+  --watch [sec]           繰り返し表示する(既定 60秒)
+  --json                  機械可読出力
+  --repos-file <path>     対象リポジトリ一覧の差し替え(1行1リポジトリ名)
+  --all                   org全リポジトリ(非アーカイブ・非fork)を対象にする
+  --include-zombie        ゾンビ run(下記)も ZOMBIE 行として表示する
+  --parallel <n>          並列度(既定 12)
+  --no-cache              リポジトリ一覧を再取得する
+  -h, --help              このヘルプを表示する
+
+列の意味:
+  STATE   WAIT  承認待ち(GitHub Environment の required reviewers)
+          TIMER wait timer 待ち
+          QUEUE 閾値を超えて未着手のまま積まれている run
+          ZOMBIE GitHubがdispatchに失敗し永久にqueuedのまま残った run。
+                 cancel も force-cancel も 409 で拒否されるため消せない。
+                 同じワークフローにより新しい completed run があることで判定する。
+                 既定では除外し、件数だけサマリに出す
+  ENV     承認対象の Environment 名。QUEUE 行は環境が未確定のためワークフロー名
+  AGE     承認待ちに入ってからの経過。先頭の ~ は job から取れず run 開始時刻で
+          代用したことを示す(planの実行時間分だけ過大になる)
+  ME      * は自分が承認できる(current_user_can_approve)
+
+環境変数:
+  APPLYBOARD_ZEBRA  交互行の背景色(256色番号, 既定 236)。off で無効化
+
+ファイル:
+  対象リポジトリ  medpeer-dev/github-terraform の envs/terraform-repositories/repos/*.yml
+  キャッシュ      ~/.cache/applyboard/repos.txt (24時間)
+EOS
+}
+
+MINE_ONLY=false
+QUEUED_THRESHOLD=30
+SORT_KEY="age"
+WATCH_INTERVAL=0
+JSON_OUT=false
+REPOS_FILE=""
+USE_ALL=false
+PARALLEL=12
+USE_CACHE=true
+INCLUDE_ZOMBIE=false
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --mine) MINE_ONLY=true; shift ;;
+        --queued-threshold) QUEUED_THRESHOLD="${2:-}"; shift 2 ;;
+        --sort) SORT_KEY="${2:-}"; shift 2 ;;
+        --watch)
+            if [[ "${2:-}" =~ ^[0-9]+$ ]]; then WATCH_INTERVAL="$2"; shift 2
+            else WATCH_INTERVAL=60; shift; fi ;;
+        --json) JSON_OUT=true; shift ;;
+        --repos-file) REPOS_FILE="${2:-}"; shift 2 ;;
+        --all) USE_ALL=true; shift ;;
+        --include-zombie) INCLUDE_ZOMBIE=true; shift ;;
+        --parallel) PARALLEL="${2:-}"; shift 2 ;;
+        --no-cache) USE_CACHE=false; shift ;;
+        -h|--help) usage; exit 0 ;;
+        *) echo "Unknown option: $1" >&2; usage >&2; exit 1 ;;
+    esac
+done
+
+case "$SORT_KEY" in
+    age|repo|state) ;;
+    *) echo "Invalid --sort: $SORT_KEY (age|repo|state)" >&2; exit 1 ;;
+esac
+[[ "$QUEUED_THRESHOLD" =~ ^[0-9]+$ ]] || { echo "Invalid --queued-threshold: $QUEUED_THRESHOLD" >&2; exit 1; }
+[[ "$PARALLEL" =~ ^[0-9]+$ ]] && [ "$PARALLEL" -gt 0 ] || { echo "Invalid --parallel: $PARALLEL" >&2; exit 1; }
+
+for cmd in gh jq; do
+    command -v "$cmd" >/dev/null 2>&1 || { echo "$cmd が必要です" >&2; exit 1; }
+done
+
+if [ -t 1 ] && ! $JSON_OUT; then
+    RED=$'\033[31m'; YEL=$'\033[33m'; CYN=$'\033[36m'
+    DIM=$'\033[2m'; BLD=$'\033[1m'; NC=$'\033[0m'
+    case "${APPLYBOARD_ZEBRA:-236}" in
+        off|0) ZB="" ;;
+        *) ZB=$'\033[48;5;'"${APPLYBOARD_ZEBRA:-236}"'m' ;;
+    esac
+else
+    RED=""; YEL=""; CYN=""; DIM=""; BLD=""; NC=""; ZB=""
+fi
+
+# ---------- 対象リポジトリの決定 ----------
+# github-terraform の repos/*.yml が「Environmentによる承認が設定されうるリポジトリ」の
+# 定義そのものなので、ヒューリスティックな判定を挟まずファイル名一覧をそのまま使う。
+fetch_source_repos() {
+    local cache="$CACHE_DIR/repos.txt" age
+    if $USE_CACHE && [ -f "$cache" ] && [ -s "$cache" ]; then
+        age=$(( $(date +%s) - $(date -r "$cache" +%s) ))
+        if [ "$age" -lt "$CACHE_TTL" ]; then cat "$cache"; return 0; fi
+    fi
+    mkdir -p "$CACHE_DIR"
+    if gh api "repos/$ORG/$SOURCE_REPO/contents/$SOURCE_PATH" \
+        --jq '.[] | select(.type == "file" and (.name | endswith(".yml"))) | .name | rtrimstr(".yml")' \
+        > "$cache.tmp" 2>/dev/null && [ -s "$cache.tmp" ]; then
+        mv "$cache.tmp" "$cache"
+        cat "$cache"
+    else
+        # 一覧が引けないことを理由に何も表示しない、を避ける
+        rm -f "$cache.tmp"
+        if [ -f "$cache" ] && [ -s "$cache" ]; then
+            echo "${YEL}⚠ リポジトリ一覧を取得できませんでした。期限切れキャッシュを使用します${NC}" >&2
+            cat "$cache"
+        else
+            return 1
+        fi
+    fi
+}
+
+fetch_all_org_repos() {
+    local cache="$CACHE_DIR/org_repos.txt" age
+    if $USE_CACHE && [ -f "$cache" ] && [ -s "$cache" ]; then
+        age=$(( $(date +%s) - $(date -r "$cache" +%s) ))
+        if [ "$age" -lt "$CACHE_TTL" ]; then cat "$cache"; return 0; fi
+    fi
+    mkdir -p "$CACHE_DIR"
+    if gh api --paginate "orgs/$ORG/repos?per_page=100&type=all" \
+        --jq '.[] | select(.archived==false and .fork==false) | .name' > "$cache.tmp" 2>/dev/null \
+        && [ -s "$cache.tmp" ]; then
+        mv "$cache.tmp" "$cache"; cat "$cache"
+    else
+        rm -f "$cache.tmp"
+        [ -f "$cache" ] && [ -s "$cache" ] && cat "$cache" || return 1
+    fi
+}
+
+load_repos() {
+    REPOS=()
+    local r
+    if [ -n "$REPOS_FILE" ]; then
+        [ -f "$REPOS_FILE" ] || { echo "リポジトリ一覧が見つかりません: $REPOS_FILE" >&2; return 1; }
+        while IFS= read -r r; do
+            [ -z "$r" ] && continue
+            [[ "$r" == \#* ]] && continue
+            REPOS+=("$r")
+        done < "$REPOS_FILE"
+    elif $USE_ALL; then
+        while IFS= read -r r; do [ -n "$r" ] && REPOS+=("$r"); done < <(fetch_all_org_repos | sort)
+    else
+        while IFS= read -r r; do [ -n "$r" ] && REPOS+=("$r"); done < <(fetch_source_repos | sort)
+    fi
+    [ ${#REPOS[@]} -eq 0 ] && { echo "対象リポジトリを決定できませんでした" >&2; return 1; }
+    return 0
+}
+
+# ---------- run の取得 ----------
+# waiting と queued は status ごとに別クエリが要る。
+# status を付けずに最新100件を引く方式では、16日前から queued のままの run のように
+# 古い滞留を取りこぼす。
+fetch_runs() {
+    local repo="$1" st="$2" i
+    local out="$RUNS_DIR/$repo.$st.json"
+    for i in 1 2 3; do
+        if gh api "repos/$ORG/$repo/actions/runs?per_page=100&status=$st" > "$out" 2> "$out.err" \
+           && jq -e 'type == "object"' "$out" >/dev/null 2>&1; then
+            return 0
+        fi
+        [ "$i" -lt 3 ] && sleep "$i"
+    done
+    rm -f "$out"
+}
+
+# waiting の run にだけ、承認情報(pending_deployments)と
+# 承認待ちに入った時刻(waiting 状態の job の started_at)を追加で引く。
+fetch_wait_detail() {
+    local repo="$1" id="$2" i
+    for i in 1 2 3; do
+        if gh api "repos/$ORG/$repo/actions/runs/$id/pending_deployments" \
+             > "$WAIT_DIR/$repo@$id.pd.json" 2>/dev/null \
+           && jq -e 'type == "array"' "$WAIT_DIR/$repo@$id.pd.json" >/dev/null 2>&1; then
+            break
+        fi
+        rm -f "$WAIT_DIR/$repo@$id.pd.json"
+        [ "$i" -lt 3 ] && sleep "$i"
+    done
+    for i in 1 2 3; do
+        if gh api "repos/$ORG/$repo/actions/runs/$id/jobs?per_page=100" \
+             > "$WAIT_DIR/$repo@$id.jobs.json" 2>/dev/null \
+           && jq -e 'type == "object"' "$WAIT_DIR/$repo@$id.jobs.json" >/dev/null 2>&1; then
+            return 0
+        fi
+        rm -f "$WAIT_DIR/$repo@$id.jobs.json"
+        [ "$i" -lt 3 ] && sleep "$i"
+    done
+}
+
+JQ_HELPERS='
+def z2: tostring | if length < 2 then "0" + . else . end;
+def age($s):
+  ($s | floor) as $t
+  | if $t >= 86400 then "\($t / 86400 | floor)d\(($t % 86400) / 3600 | floor | z2)h"
+    elif $t >= 3600 then "\($t / 3600 | floor)h\(($t % 3600) / 60 | floor | z2)m"
+    else "\($t / 60 | floor)m" end;
+'
+
+# ---------- 1回分の収集 ----------
+collect() {
+    WORK="$(mktemp -d)"
+    RUNS_DIR="$WORK/runs"; WAIT_DIR="$WORK/wait"
+    mkdir -p "$RUNS_DIR" "$WAIT_DIR"
+
+    export ORG WORK RUNS_DIR WAIT_DIR
+    export -f fetch_runs fetch_wait_detail fetch_latest_completed
+
+    # リポジトリ単位ではなく (リポジトリ, status) 単位で並列化する。
+    # 1ワーカーが waiting と queued を順に引く実装では並列度が実質半分になる。
+    local r
+    : > "$WORK/units.txt"
+    for r in "${REPOS[@]}"; do
+        printf '%s waiting\n%s queued\n' "$r" "$r" >> "$WORK/units.txt"
+    done
+    xargs -P "$PARALLEL" -n 2 bash -c 'fetch_runs "$0" "$1"' < "$WORK/units.txt"
+
+    # 「承認待ち0件」と「取得できていない」を混同しないための突き合わせ。
+    MISSED=()
+    for r in "${REPOS[@]}"; do
+        if [ ! -f "$RUNS_DIR/$r.waiting.json" ] || [ ! -f "$RUNS_DIR/$r.queued.json" ]; then
+            MISSED+=("$r")
+        fi
+    done
+
+    # per_page=100 を超えて切り捨てていないかを確認する
+    TRUNCATED=()
+    local f n t
+    for f in "$RUNS_DIR"/*.json; do
+        [ -f "$f" ] || continue
+        n=$(jq -r '.workflow_runs | length' "$f" 2>/dev/null) || continue
+        t=$(jq -r '.total_count // 0' "$f" 2>/dev/null) || continue
+        # total_count は list と別に集計されるため、ページを埋めていないのに
+        # total_count > 件数 になることがある(実測: 0件なのに total_count=1)。
+        # 打ち切りが起きうるのはページを使い切った場合だけ。
+        [ "$n" -ge 100 ] && [ "$t" -gt "$n" ] && TRUNCATED+=("$(basename "${f%.json}") ${n}/${t}")
+    done
+
+    # waiting の run を列挙して詳細を引く
+    local pairs="$WORK/pairs.txt"
+    : > "$pairs"
+    for r in "${REPOS[@]}"; do
+        [ -f "$RUNS_DIR/$r.waiting.json" ] || continue
+        jq -r --arg repo "$r" '.workflow_runs[] | "\($repo)\t\(.id)"' "$RUNS_DIR/$r.waiting.json" >> "$pairs"
+        jq -c --arg repo "$r" '.workflow_runs[] | {repo: $repo, run: .}' "$RUNS_DIR/$r.waiting.json" \
+            > "$WORK/waiting_runs.$r.json"
+    done
+    if [ -s "$pairs" ]; then
+        awk -F'\t' '{print $1" "$2}' "$pairs" \
+            | xargs -P "$PARALLEL" -n 2 bash -c 'fetch_wait_detail "$0" "$1"'
+    fi
+
+    NOW="$(date +%s)"
+    ROWS="$WORK/rows.json"
+    : > "$ROWS"
+
+    # WAIT / TIMER 行
+    local repo id pd jobs
+    while IFS=$'\t' read -r repo id; do
+        [ -z "$repo" ] && continue
+        pd="$WAIT_DIR/$repo@$id.pd.json"; jobs="$WAIT_DIR/$repo@$id.jobs.json"
+        [ -f "$pd" ] || pd=/dev/null
+        [ -f "$jobs" ] || jobs=/dev/null
+        jq -c --argjson now "$NOW" --arg repo "$repo" \
+              --slurpfile pd_in "$pd" --slurpfile jobs_in "$jobs" "
+        $JQ_HELPERS
+        .run as \$run
+        | (\$jobs_in[0].jobs? // [] | map(select(.status == \"waiting\") | .started_at | fromdate) | min) as \$wsince
+        | (\$wsince // (\$run.run_started_at | fromdate)) as \$since
+        | (\$now - \$since) as \$secs
+        | (\$pd_in[0] // []) as \$pds
+        | (if (\$pds | length) == 0 then [null] else \$pds end)[]
+        | {
+            state: (if . == null then \"WAIT\"
+                    elif ((.reviewers | length) == 0 and (.wait_timer // 0) > 0) then \"TIMER\"
+                    else \"WAIT\" end),
+            repo: \$repo,
+            env: (if . == null then \"?\" else .environment.name end),
+            workflow: \$run.name,
+            age: ((if \$wsince == null then \"~\" else \"\" end) + age(\$secs)),
+            seconds: \$secs,
+            approx: (\$wsince == null),
+            can_approve: (if . == null then false else .current_user_can_approve end),
+            actor: (\$run.actor.login // \"-\"),
+            reviewers: (if . == null then [] else [.reviewers[] | .reviewer.slug // .reviewer.login] end),
+            run_id: \$run.id,
+            url: \$run.html_url
+          }" "$WORK/waiting_runs.$repo.json" >> "$ROWS" 2>/dev/null
+    done < "$pairs"
+
+    # QUEUE 行。正常な待ち行列と区別するため閾値を超えたものだけ出す。
+    for r in "${REPOS[@]}"; do
+        [ -f "$RUNS_DIR/$r.queued.json" ] || continue
+        jq -c --argjson now "$NOW" --arg repo "$r" --argjson th "$QUEUED_THRESHOLD" "
+        $JQ_HELPERS
+        .workflow_runs[]
+        | (\$now - (.created_at | fromdate)) as \$secs
+        | select(\$secs >= (\$th * 60))
+        | {
+            state: \"QUEUE\", repo: \$repo, env: .name, workflow: .name,
+            age: age(\$secs), seconds: \$secs, approx: false, can_approve: false,
+            actor: (.actor.login // \"-\"), reviewers: [],
+            run_id: .id, url: .html_url,
+            workflow_id: .workflow_id, created: .created_at
+          }" "$RUNS_DIR/$r.queued.json" >> "$ROWS" 2>/dev/null
+    done
+
+    annotate_zombies
+}
+
+# GitHub が dispatch に失敗した run は queued のまま永久に残る。
+# 参照系APIは queued と言い続けるが内部的には終了扱いで、cancel も force-cancel も
+# 409 (completed だからキャンセル不可) で拒否されるため、消す手段が無い。
+# 「同じワークフローに、その run より新しい completed run がある」なら
+# その run は二度と動かない。実測50件すべてでこの判定が成立した。
+annotate_zombies() {
+    local list="$WORK/wf.txt"
+    mkdir -p "$WORK/latest"
+    jq -r 'select(.state == "QUEUE") | "\(.repo)\t\(.workflow_id)"' "$ROWS" 2>/dev/null \
+        | sort -u > "$list"
+    if [ -s "$list" ]; then
+        awk -F'\t' '{print $1" "$2}' "$list" \
+            | xargs -P "$PARALLEL" -n 2 bash -c 'fetch_latest_completed "$0" "$1"'
+    fi
+    cat "$WORK/latest"/*.tsv > "$WORK/latest.tsv" 2>/dev/null
+    jq -R 'split("\t") | select(length == 3) | {key: (.[0] + "/" + .[1]), value: .[2]}' \
+        "$WORK/latest.tsv" 2>/dev/null | jq -s 'from_entries' > "$WORK/latest.json"
+    [ -s "$WORK/latest.json" ] || echo '{}' > "$WORK/latest.json"
+
+    jq -c --slurpfile lm "$WORK/latest.json" '
+      ($lm[0] // {}) as $m
+      | .zombie = (if .state == "QUEUE"
+                   then (($m[.repo + "/" + (.workflow_id | tostring)] // "") as $l
+                         | ($l != "") and ($l > .created))
+                   else false end)' "$ROWS" > "$WORK/rows_z.json" 2>/dev/null \
+        && mv "$WORK/rows_z.json" "$ROWS"
+}
+
+fetch_latest_completed() {
+    local repo="$1" wf="$2" latest i
+    for i in 1 2 3; do
+        latest=$(gh api "repos/$ORG/$repo/actions/workflows/$wf/runs?per_page=1&status=completed" \
+                    --jq '.workflow_runs[0].created_at // ""' 2>/dev/null) && break
+        [ "$i" -lt 3 ] && sleep "$i"
+    done
+    printf '%s\t%s\t%s\n' "$repo" "$wf" "${latest:-}" > "$WORK/latest/$repo@$wf.tsv"
+}
+
+# ---------- 出力 ----------
+render() {
+    local sorted="$WORK/sorted.json"
+    local filter='.'
+    # ゾンビは既定で除外するが、除外した事実は必ずサマリに出す(黙って消さない)。
+    ZOMBIES=$(jq -s '[.[] | select(.zombie)] | length' "$ROWS")
+    if $INCLUDE_ZOMBIE; then
+        filter='map(if .zombie then .state = "ZOMBIE" else . end)'
+    else
+        filter='map(select(.zombie | not))'
+    fi
+    $MINE_ONLY && filter="$filter | map(select(.can_approve))"
+
+    case "$SORT_KEY" in
+        age)   jq -s "$filter | sort_by(-.seconds)" "$ROWS" > "$sorted" ;;
+        repo)  jq -s "$filter | sort_by(.repo, .env)" "$ROWS" > "$sorted" ;;
+        state) jq -s "$filter | sort_by(.state, -.seconds)" "$ROWS" > "$sorted" ;;
+    esac
+
+    if $JSON_OUT; then
+        jq --argjson missed "$(printf '%s\n' "${MISSED[@]+"${MISSED[@]}"}" | jq -R . | jq -s 'map(select(. != ""))')" \
+           --argjson zombies "$ZOMBIES" \
+           '{rows: ., unreachable_repositories: $missed, zombies_excluded: $zombies}' "$sorted"
+        return 0
+    fi
+
+    jq -r '.[] | [.state, .repo, .env, .age, (if .can_approve then "*" else "-" end),
+                  .actor, (if (.reviewers | length) > 0 then (.reviewers | join(", ")) else "-" end),
+                  .url, (.seconds | tostring)] | @tsv' "$sorted" \
+    | awk -F'\t' -v NC="$NC" -v RED="$RED" -v YEL="$YEL" -v CYN="$CYN" -v DIM="$DIM" -v BLD="$BLD" -v ZB="$ZB" '
+    {
+      n++
+      for (i = 1; i <= 9; i++) c[n,i] = $i
+      if (length($2) > w2) w2 = length($2)
+      if (length($3) > w3) w3 = length($3)
+      if (length($4) > w4) w4 = length($4)
+      if (length($6) > w6) w6 = length($6)
+      if (length($7) > w7) w7 = length($7)
+    }
+    END {
+      if (n == 0) exit
+      if (w2 < 10) w2 = 10
+      if (w3 < 3)  w3 = 3
+      if (w4 < 3)  w4 = 3
+      if (w6 < 5)  w6 = 5
+      if (w7 < 9)  w7 = 9
+      printf "%s%-6s %-*s %-*s %*s %-2s %-*s %-*s %s%s\n", DIM, "STATE", w2, "REPOSITORY", \
+             w3, "ENV", w4, "AGE", "ME", w6, "ACTOR", w7, "REVIEWERS", "RUN", NC
+      for (i = 1; i <= n; i++) {
+        zb = (i % 2 == 0) ? ZB : ""
+        rs = (zb == "") ? NC : NC zb   # 色終了で背景も消えるため巻き直す
+        # 幅を先に確定してから色を巻く (ANSIエスケープは表示幅に含まれないため)
+        st = sprintf("%-6s", c[i,1])
+        if (c[i,1] == "QUEUE") st = CYN st rs
+        ag = sprintf("%*s", w4, c[i,4])
+        if (c[i,9] + 0 >= 259200) ag = RED ag rs
+        else if (c[i,9] + 0 >= 86400) ag = YEL ag rs
+        me = sprintf("%-2s", c[i,5])
+        if (c[i,5] == "*") me = BLD me rs
+        line = sprintf("%s %-*s %-*s %s %s %-*s %-*s %s", st, w2, c[i,2], w3, c[i,3], ag, me, \
+                       w6, c[i,6], w7, c[i,7], c[i,8])
+        printf "%s%s%s\n", zb, line, (zb == "" ? "" : NC)
+      }
+    }'
+
+    local total mine queued timer
+    total=$(jq '[.[] | select(.state == "WAIT")] | length' "$sorted")
+    timer=$(jq '[.[] | select(.state == "TIMER")] | length' "$sorted")
+    mine=$(jq '[.[] | select(.state != "QUEUE" and .can_approve)] | length' "$sorted")
+    queued=$(jq '[.[] | select(.state == "QUEUE")] | length' "$sorted")
+
+    echo ""
+    if [ "$total" -eq 0 ] && [ "$queued" -eq 0 ] && [ "$timer" -eq 0 ]; then
+        printf '%s承認待ちはありません%s\n' "$DIM" "$NC"
+    else
+        printf '承認待ち %s件 (うち自分が承認可 %s件)' "$total" "$mine"
+        [ "$timer" -gt 0 ] && printf ' / wait timer %s件' "$timer"
+        printf ' / %s分超の詰まり %s件\n' "$QUEUED_THRESHOLD" "$queued"
+    fi
+    if [ "$ZOMBIES" -gt 0 ] && ! $INCLUDE_ZOMBIE; then
+        printf '%sゾンビ run %s件を除外 (--include-zombie で表示)%s\n' "$DIM" "$ZOMBIES" "$NC"
+    fi
+
+    # 見えていないものがあることを、件数0の表と並べて必ず告げる
+    if [ ${#MISSED[@]} -gt 0 ]; then
+        printf '%s⚠ %s件のリポジトリを確認できていません (この表は不完全です):%s %s\n' \
+            "$RED" "${#MISSED[@]}" "$NC" "${MISSED[*]}" >&2
+    fi
+    local t
+    for t in ${TRUNCATED[@]+"${TRUNCATED[@]}"}; do
+        printf '%s⚠ 100件で打ち切り: %s%s\n' "$YEL" "$t" "$NC" >&2
+    done
+}
+
+load_repos || exit 1
+
+if [ "$WATCH_INTERVAL" -gt 0 ]; then
+    while true; do
+        collect
+        clear
+        printf '%s%s  (%s間隔で更新, Ctrl-C で終了)%s\n\n' "$DIM" "$(date '+%Y-%m-%d %H:%M:%S')" \
+               "${WATCH_INTERVAL}秒" "$NC"
+        render
+        rm -rf "$WORK"
+        sleep "$WATCH_INTERVAL"
+    done
+else
+    collect
+    trap 'rm -rf "$WORK"' EXIT
+    render
+fi

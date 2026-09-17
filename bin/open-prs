@@ -8,15 +8,16 @@ set -euo pipefail
 AUTHOR="${OPEN_PRS_AUTHOR:-$(gh api user --jq .login)}"
 OWNER="${1:-}"
 
-args=(--author="${AUTHOR}" --state=open --limit 100 --json title,url)
+args=(--author="${AUTHOR}" --state=open --limit 100 --json repository,number,title,url)
 [[ -n "${OWNER}" ]] && args+=(--owner="${OWNER}")
 
+# 出力形式: リポジトリ名 PR番号 タイトル
 # ターミナル出力時は OSC 8 ハイパーリンクでタイトルをクリック可能にする
 # パイプ・リダイレクト時は Markdown 形式にフォールバック
 if [[ -t 1 ]]; then
-  jq_filter='.[] | "- ]8;;\(.url)\\\(.title)]8;;\\"'
+  jq_filter='.[] | "- \(.repository.nameWithOwner) #\(.number) ]8;;\(.url)\\\(.title)]8;;\\"'
 else
-  jq_filter='.[] | "- [\(.title)](\(.url))"'
+  jq_filter='.[] | "- \(.repository.nameWithOwner) #\(.number) [\(.title)](\(.url))"'
 fi
 
 result=$(gh search prs "${args[@]}" --jq "${jq_filter}")

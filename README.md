@@ -62,6 +62,7 @@ $ brew install reattach-to-user-namespace
 `bin/` 配下のスクリプトは `install_for_macos.sh` で `~/.local/bin/` にシンボリックリンクされる。
 
 - `open-prs [owner]` - 自分が作成したオープン中の PR を一覧表示する（対象ユーザーは `gh` のログインアカウント。`OPEN_PRS_AUTHOR` で上書き可）
+- `applyboard [options]` - terraform apply の承認待ち・詰まりを 1 待ち 1 行で俯瞰する（`--mine` で自分が承認できるものだけ、`--watch` で定期更新。詳細は `applyboard --help`）
 
 ## vim
 
