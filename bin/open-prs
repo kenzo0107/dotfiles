@@ -1,29 +1,41 @@
 #!/usr/bin/env bash
-# 自分が作成した未マージ（オープン中）の PR のタイトルと URL を出力する
-# 使い方: open-prs [owner]   （owner 省略時は全 owner が対象）
-# 対象ユーザーは gh のログインアカウント。環境変数 OPEN_PRS_AUTHOR で上書き可
-
 set -euo pipefail
 
-AUTHOR="${OPEN_PRS_AUTHOR:-$(gh api user --jq .login)}"
-OWNER="${1:-}"
+AUTHOR="mpg-kenzo-tanaka"
+OWNER="medpeer-dev"
+EXCLUDE_DRAFT=false
 
-args=(--author="${AUTHOR}" --state=open --limit 100 --json repository,number,title,url)
-[[ -n "${OWNER}" ]] && args+=(--owner="${OWNER}")
+usage() {
+  echo "usage: $(basename "$0") [--no-draft]" >&2
+}
 
-# 出力形式: リポジトリ名 PR番号 タイトル
-# ターミナル出力時は OSC 8 ハイパーリンクでタイトルをクリック可能にする
-# パイプ・リダイレクト時は Markdown 形式にフォールバック
-if [[ -t 1 ]]; then
-  jq_filter='.[] | "- \(.repository.nameWithOwner) #\(.number) ]8;;\(.url)\\\(.title)]8;;\\"'
-else
-  jq_filter='.[] | "- \(.repository.nameWithOwner) #\(.number) [\(.title)](\(.url))"'
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --no-draft) EXCLUDE_DRAFT=true ;;
+    -h|--help) usage; exit 0 ;;
+    *) usage; exit 1 ;;
+  esac
+  shift
+done
+
+RESULT=$(gh search prs \
+  --author="${AUTHOR}" \
+  --owner="${OWNER}" \
+  --state=open \
+  --limit=200 \
+  --json title,url,repository,isDraft \
+  --jq "
+    map(select(${EXCLUDE_DRAFT} | not or (.isDraft | not))) |
+    group_by(.repository.name)[] |
+    \"- \" + .[0].repository.name + \"\n\" +
+    (map(\"    - \" + (if .isDraft then \"[draft] \" else \"\" end) + \"[\" + .title + \"](\" + .url + \")\") | join(\"\n\"))
+  ")
+
+if [[ -z "${RESULT}" ]]; then
+  echo "open な PR はありません" >&2
+  exit 0
 fi
 
-result=$(gh search prs "${args[@]}" --jq "${jq_filter}")
-
-if [[ -z "${result}" ]]; then
-  echo "未マージの PR はありません"
-else
-  echo "${result}"
-fi
+echo "## open な PR"
+echo ""
+echo "${RESULT}"
