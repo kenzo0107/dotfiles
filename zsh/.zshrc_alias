@@ -33,12 +33,13 @@ alias ofpush='git push --force-with-lease origin `git rev-parse --abbrev-ref HEA
 alias opull='git pull origin `git rev-parse --abbrev-ref HEAD`'
 alias upush='git push upstream `git rev-parse --abbrev-ref HEAD`'
 alias upull='git pull upstream `git rev-parse --abbrev-ref HEAD`'
+alias git-branch-delete-merged="git branch --merged | grep -v '*' | grep -vE '^\s*(main|master)$' | xargs git branch -d"
 
 alias clear_github_profile_status='~/clear_github_profile_status.sh'
 
 # terraform
 alias tf='terraform '
-alias ti='terraform init'
+alias ti='terraform init -backend=false'
 alias tg='terraform get -update'
 alias tp='terraform plan'
 
@@ -58,7 +59,7 @@ alias awsid='aws sts get-caller-identity --query "Account" --output text | pbcop
 alias awsume='. "$(mise which awsume)" --session-name kenzo.tanaka'
 
 # ai-agent
-alias c='claude -c'
+alias c='claude -r'
 alias ccusage='npx ccusage@latest'
 alias ccusagem="npx ccusage@latest monthly"
 alias claude-night-mode='touch ~/.claude/night-mode-active && caffeinate -i ~/.local/bin/claude --dangerously-skip-permissions'

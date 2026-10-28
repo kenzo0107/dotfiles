@@ -76,3 +76,9 @@ generate_password() {
 echo
 }
 
+ci() {
+  local num=$1; shift
+  local title
+  title=$(gh issue view "$num" --json title -q .title)
+  claude -w "issue-$num" -n "#$num $title" "$@"
+}

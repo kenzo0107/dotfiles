@@ -20,17 +20,17 @@ zle -N select-history
 bindkey '^R' select-history
 
 # select git branch name
-git-branch () {
-	if git rev-parse 2> /dev/null; then
-		local branch=$(git branch -a | fzf | cut -c 3- | awk '{print $1}')
-		if [ -n "$branch" ]; then
-			BUFFER="$BUFFER${branch}"
-			CURSOR=$#BUFFER
-		fi
-	fi
-}
-zle -N git-branch
-bindkey '^G^B' git-branch
+#git-branch () {
+#	if git rev-parse 2> /dev/null; then
+#		local branch=$(git branch -a | fzf | cut -c 3- | awk '{print $1}')
+#		if [ -n "$branch" ]; then
+#			BUFFER="$BUFFER${branch}"
+#			CURSOR=$#BUFFER
+#		fi
+#	fi
+#}
+#zle -N git-branch
+#bindkey '^G^B' git-branch
 
 # select git diff
 git-diff() {
