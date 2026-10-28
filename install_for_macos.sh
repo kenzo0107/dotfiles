@@ -34,3 +34,10 @@ for filename in `ls -A ./bin/`
 do
   ln -fs ${shell_path}/bin/${filename} ~/.local/bin/
 done
+
+# claude skills
+mkdir -p ~/.claude/skills
+for dirname in `ls -A ./claude/skills/`
+do
+  ln -fsn ${shell_path}/claude/skills/${dirname} ~/.claude/skills/
+done
